@@ -1,7 +1,7 @@
-import { Container, TextField, CssBaseline, Typography, Grid, Box, Button, Link } from '@mui/material';
+import { Container, TextField, CssBaseline, Typography, Grid, Box, Button, Link, Alert } from '@mui/material';
 import { useState } from 'react';
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom"
-import axios from "axios";
+import AuthService from '../service/auth-service';
 
 
 export default function LoginForm() {
@@ -10,9 +10,11 @@ export default function LoginForm() {
     const [emailError, setEmailError] = useState('')
     const [passwordError, setPasswordError] = useState('')
 
+    const [message, setMessage] = useState('')
+
     const navigate = useNavigate()
 
-    async function LoginUser(e) {
+    function LoginUser(e) {
         e.preventDefault()
 
         let isValid = true
@@ -34,21 +36,26 @@ export default function LoginForm() {
             isValid = false
         }
 
-        if (isValid) {
-            const response = await axios.post('/api/login', {
-                email,
-                password
-            })
-            const data = response.data
-            console.log({ data })
+        setMessage('')
 
-            if (data.user) {
-                localStorage.setItem('token', data.user)
-                navigate('/home page')
-            } else {
-                setEmailError('Please check your login credentials')
-                setPasswordError('Please check your login credentials')
-            }
+        if (isValid) {
+            AuthService.login(email, password).then(
+                ()=>{
+                    navigate('/home page')
+                    window.location.reload()
+                },
+                (error)=>{
+                    const resMessage = (
+                        error.response &&
+                        error.response.data &&
+                        error.response.data.message
+                        )   
+                        || error.message
+                        || error.toString()
+
+                    setMessage(resMessage)
+                }
+            )
         } else {
             return;
         }
@@ -96,7 +103,9 @@ export default function LoginForm() {
                 <Grid item justifyContent='flex-end' sx={{ mt: 2 }}>
                     <Typography>Have not join us? Click this link <Link to="/register" variant='body2' component={ReactRouterLink}>Sign Up</Link> to join us.</Typography>
                 </Grid>
-
+                {message && (
+                    <Alert severity= "error">{message}</Alert>
+                )}
             </Box>
 
         </Container>

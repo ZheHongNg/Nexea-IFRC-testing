@@ -1,7 +1,9 @@
-import axios from "axios";
-import { Container, TextField, CssBaseline, Typography, Grid, Box, Button, Link, Select, MenuItem, InputLabel } from '@mui/material';
+import AuthService from '../service/auth-service'
+import { Container, TextField, CssBaseline, Typography, Grid, Box, Button, Link, Select, MenuItem, InputLabel, Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, Link as ReactRouterLink } from "react-router-dom";
+
+
 
 let departmentOptions = ['IT', 'Marketing', 'Accounting']
 
@@ -34,6 +36,7 @@ export default function RegisterForm() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [department, setDepartment] = useState('')
+
     const [fnameError, setFNameError] = useState('')
     const [lnameError, setLNameError] = useState('')
     const [emailError, setEmailError] = useState('')
@@ -41,9 +44,12 @@ export default function RegisterForm() {
     const [phoneNumberError, setPhoneNumberError] = useState('')
     const [departmentError, setDepartmentError] = useState('')
 
+    const [successful, setSuccessful] = useState(false)
+    const [message, setMessage] = useState('')
+
     const confirmPasswordError = usePasswordConfirmation(password, confirmPassword);
 
-    async function registerUser(e) {
+    function registerUser(e) {
         e.preventDefault()
 
         let isValid = true
@@ -92,29 +98,30 @@ export default function RegisterForm() {
             isValid = false;
         }
 
+        setSuccessful(false)
+        setMessage('')
+
         if (isValid) {
-            const response = await axios.post('/api/register', {
+            AuthService.register(fname, lname, email, password, phoneNumber, department).then(
+                (response) => {
+                    setMessage(response.data.message)
+                    setSuccessful(true)
+                },
+                (error) => {
+                    const resMessage = (
+                        error.response &&
+                        error.response.data &&
+                        error.response.data.message
+                        )   
+                        || error.message
+                        || error.toString()
 
-                fname,
-                lname,
-                email,
-                password,
-                phoneNumber,
-                department
-            })
-            const data = response.data
-            console.log({ data })
+                    setMessage(resMessage)
+                    setSuccessful(false)
+                }
+            )
 
-            if (data.status === 'OK') {
-                navigate('/')
-            } else {
-                console.log('duplicate user')
-                setEmailError('Existing email address')
-            }
-        } else {
-            return;
         }
-
     }
 
 
@@ -246,8 +253,11 @@ export default function RegisterForm() {
 
                 <Button type="submit" onClick={registerUser} variant="contained" sx={{ mt: 3 }} fullWidth>Add User</Button>
                 <Grid item justifyContent='flex-end' sx={{ mt: 2 }}>
-                    <Typography>Already have an account?<Link to="/" variant='body2' component={ReactRouterLink}>Sign in</Link></Typography>
+                    <Typography>Already have an account?<Link to="/login" variant='body2' component={ReactRouterLink}>Sign in</Link></Typography>
                 </Grid>
+                {message && (
+                    <Alert severity={successful ? "success" : "error"}>{message}</Alert>
+                )}
 
             </Box>
 
