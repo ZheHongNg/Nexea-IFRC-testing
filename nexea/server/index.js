@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const mongoose = require('mongoose')
+const connection = require('./connection')
 const User = require('./model/user-model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
@@ -11,17 +11,7 @@ app.use(express.json())
 require('dotenv').config()
 
 
-// const connection = async () => {
-//     try {
-//         await mongoose.connect(process.env.MONGO_URL);
-//         console.log("Database is connected");
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
-
-// module.exports = connection;
-mongoose.connect(process.env.MONGO_URL);
+connection();
 
 app.post('/api/register', async (req, res) => {
     console.log(req.body)
