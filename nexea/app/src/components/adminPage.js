@@ -7,7 +7,7 @@ export default function Homepage() {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    UserService.getUserBoard().then(
+    UserService.getAdminBoard().then(
       (response) => {
         setContent(response.data);
       },
