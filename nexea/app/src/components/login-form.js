@@ -1,7 +1,7 @@
 import { Container, TextField, CssBaseline, Typography, Grid, Box, Button, Link, Alert } from '@mui/material';
 import { useState } from 'react';
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom"
-import AuthService from '../service/auth-service';
+import AuthService from '../services/auth-service';
 
 
 export default function LoginForm() {

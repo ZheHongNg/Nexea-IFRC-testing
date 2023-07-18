@@ -1,4 +1,4 @@
-import AuthService from '../service/auth-service'
+import AuthService from '../services/auth-service'
 import { Container, TextField, CssBaseline, Typography, Grid, Box, Button, Link, Select, MenuItem, InputLabel, Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, Link as ReactRouterLink } from "react-router-dom";

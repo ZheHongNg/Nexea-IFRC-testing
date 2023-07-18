@@ -6,100 +6,56 @@ const User = require('./model/user-model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const config = require('./config/auth-config')
+const connection = require('./config/connection')
+const bodyParser = require('body-parser')
+const db = require('./model')
+const Role = db.role
+
 app.use(cors())
 app.use(express.json())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:true}))
 require('dotenv').config()
 
+connection();
 
-// const connection = async () => {
-//     try {
-//         await mongoose.connect(process.env.MONGO_URL);
-//         console.log("Database is connected");
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome to bezkoder application." });
+  });
 
-// module.exports = connection;
-mongoose.connect(process.env.MONGO_URL);
+require('./routes/auth-routes')(app);
+require('./routes/user-routes')(app);
 
-app.post('/api/register', async (req, res) => {
-    console.log(req.body)
-    
-    try {
-        const hashedPassword = await bcrypt.hashSync(req.body.password, 10)
-        const token = jwt.sign(
-            {
-                email: req.body.email
-            },
-            config.secret
-        )
-        
-        await User.create({
-            fname: req.body.fname,
-            lname: req.body.lname,
-            email: req.body.email,
-            password: hashedPassword,
-            phoneNumber: req.body.phoneNumber,
-            department: req.body.department,
-            confirmationCode : token
-        })
-        res.json({ status: 'OK' })
-        nodemailer.sendConfirmationEmail(
-            req.body.fname,
-            req.body.lname,
-            req.body.email,
-            req.body.confirmationCode
-        )
-    } catch (err) {
-        res.json({ status: 'error', error: 'Duplicate email' })
-    }
-})
-
-app.post('/api/login', async (req, res) => {
-    console.log(req.body)
-
-    const user = await User.findOne({
-        email: req.body.email,
-    })
-    
-    const isPasswordValid = await bcrypt.compare(req.body.password, user.password)
-
-    if (isPasswordValid && user) {
-        const token = jwt.sign(
-            {
-                email: user.email
-            },
-            config.secret
-        )
-        if (user.status!="Active"){
-            return res.status('error').send({
-                message: "Pending account. Please verify your email",
+function initial(){
+    Role.estimatedDocumentCount((err, count)=>{
+        if (!err && count === 0){
+            new Role({
+                name:'user'
+            }).save(err=>{
+              if (err){
+                console.log('error', err)
+              }
+              console.log('added user to collection')  
             })
-        }else{
-            return res.json({ status: 'ok', user: token })
+            new Role({
+                name:'admin'
+            }).save(err=>{
+              if (err){
+                console.log('error', err)
+              }
+              console.log('added admin to collection')  
+            })
+            new Role({
+                name:'super-admin'
+            }).save(err=>{
+              if (err){
+                console.log('error', err)
+              }
+              console.log('added super admin to collection')  
+            })
         }
-        
-    } else {
-        return res.json({ status: 'error', user: false })
-    }
-})
-
-app.get('/api/confirm/:confirmationCode', async (req, res)=>{
-    User.findOne({
-        confirmationCode: req.params.confirmationCode
-    }).then((user)=>{
-        if (!user){
-            return res.json({ status: 'error', error: "User not found" })
-        }
-        user.status = 'Active';
-        user.save((err)=>{
-            if (err){
-                return res.json({ status: 'error', error: err })
-            }
-        })
     })
-})
+}
 
 app.listen(1337, () => {
     console.log('server start on 1337')

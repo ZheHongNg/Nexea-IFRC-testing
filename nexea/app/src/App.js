@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import AuthService from './service/auth-service';
+import AuthService from './services/auth-service';
 import eventBus from './common/eventBus';
 
 import RegisterForm from './components/register-form';
