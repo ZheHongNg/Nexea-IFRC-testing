@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const mongoose = require('mongoose')
+const connection = require('./connection')
 const User = require('./model/user-model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
 
 require('./routes/auth-routes')(app);
 require('./routes/user-routes')(app);
+
 
 function initial(){
     Role.estimatedDocumentCount((err, count)=>{
