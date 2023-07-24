@@ -5,14 +5,13 @@ const Role = db.ROLES
 checkEmail = (req, res) =>{
     User.findOne(
         {email: req.body.email}
-    ).exec((err, user)=>{
-        if (err){
-            return res.status(500).send({message:err})
-        }
-        if (user){
-            return res.status(400).send({message:'Duplicated email'})
-        }
-        next()
+    ).then((user)=>{
+      if (user){
+        return res.status(400).send({message:'Duplicated email'})
+      }
+      next()
+    }).catch(err=>{
+        return res.status(500).send({message:err})
     })
 }
 

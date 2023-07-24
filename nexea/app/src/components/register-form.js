@@ -102,7 +102,8 @@ export default function RegisterForm() {
         setMessage('')
 
         if (isValid) {
-            AuthService.register(fname, lname, email, password, phoneNumber, department).then(
+            AuthService.register(fname, lname, email, password, phoneNumber, department)
+            .then(
                 (response) => {
                     setMessage(response.data.message)
                     setSuccessful(true)

@@ -5,7 +5,6 @@ const User = db.user
 const Role = db.role
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-
 exports.register = (req, res) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10)
     const token = jwt.sign({ email: req.body.email }, config.secret);
@@ -32,16 +31,16 @@ exports.register = (req, res) => {
                 {
                     name: { $in: req.body.roles }
                 },
-                (err, roles)=>{
-                    if (err){
-                        res.status(500).send({message: err})
+                (err, roles) => {
+                    if (err) {
+                        res.status(500).send({ message: err })
                         return;
                     }
 
-                    user.roles = roles.map((role)=>role.id)
-                    user.save((err)=>{
-                        if (err){
-                            res.status(500).send({message:err})
+                    user.roles = roles.map((role) => role.id)
+                    user.save((err) => {
+                        if (err) {
+                            res.status(500).send({ message: err })
                             return;
                         }
                         res.send({
@@ -57,16 +56,16 @@ exports.register = (req, res) => {
                     })
                 }
             )
-        }else{
-            Role.findOne({name : "user"},(err,role)=>{
-                if(err){
-                    res.status(500).send({message:err})
+        } else {
+            Role.findOne({ name: "user" }, (err, role) => {
+                if (err) {
+                    res.status(500).send({ message: err })
                     return;
                 }
                 user.roles = [role.id]
-                user.save((err)=>{
-                    if(err){
-                        res.status(500).send({message:err})
+                user.save((err) => {
+                    if (err) {
+                        res.status(500).send({ message: err })
                         return
                     }
                     res.send({
@@ -85,59 +84,58 @@ exports.register = (req, res) => {
     })
 }
 
-exports.login = (req, res)=>{
+exports.login = (req, res) => {
     User.findOne({
-        email : req.body.email
+        email: req.body.email
     })
-    .populate("roles", "-__v")
-    .exec((err, user)=>{
-        if(err){
-            res.status(500).send({message:err})
-            return    
-        }
-        if(!user){
-            return res.status(404).send({message:"User not found"})
-        }
+        .populate("roles", "-__v")
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({ message: "User not found" })
+            }
 
-        let passwordIsValid = bcrypt.compareSync(req.body.password, user.password)
+            let passwordIsValid = bcrypt.compareSync(req.body.password, user.password)
 
-        if(!passwordIsValid){
-            return res.status(404).send({message:"Incorrect Password", accessToken : null})
-        }
-        if(user.status!= "Active"){
-            return res.status(401).send({message:"Please verify your account!"})
-        }
-        let token = jwt.sign({id: user.id}, config.secret)
-        let authorities = [];
+            if (!passwordIsValid) {
+                return res.status(404).send({ message: "Incorrect Password", accessToken: null })
+            }
+            if (user.status != "Active") {
+                return res.status(401).send({ message: "Please verify your account!" })
+            }
+            let token = jwt.sign({ id: user.id }, config.secret)
+            let authorities = [];
 
-        for (let i = 0; i< user.roles.length; i++){
-            authorities.push("ROLE_"+user.roles[i].name.toUpperCase())
-        }
+            for (let i = 0; i < user.roles.length; i++) {
+                authorities.push("ROLE_" + user.roles[i].name.toUpperCase())
+            }
 
-        return res.status(200).send({
-            id: user.id,
-            email: user.email,
-            status: user.status,
-            accessToken : token
+            return res.status(200).send({
+                id: user.id,
+                email: user.email,
+                status: user.status,
+                accessToken: token
+            })
         })
-    })
+        .catch(err => {
+            res.status(500).send({ message: err })
+        })
 }
 
-exports.verifyUser = (req, res, next) =>{
+exports.verifyUser = (req, res, next) => {
     User.findOne({
-        confirmationCode : req.params.confirmationCode
+        confirmationCode: req.params.confirmationCode
     })
-    .then((user)=>{
-        console.log(user)
-        if (!user){
-            return res.status(404).send({message:"User not found"})
-        }
-        user.status = "Active"
-        user.save((err)=>{
-            if(err){
-                return res.status(500).send({message:err})
+        .then((user) => {
+            console.log(user)
+            if (!user) {
+                return res.status(404).send({ message: "User not found" })
             }
+            user.status = "Active"
+            user.save((err) => {
+                if (err) {
+                    return res.status(500).send({ message: err })
+                }
+            })
         })
-    })
-    .cache((e)=>console.log("error",e))
+        .cache((e) => console.log("error", e))
 }

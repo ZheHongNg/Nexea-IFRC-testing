@@ -1,9 +1,8 @@
 import axios from 'axios'
 
-const API_URL = '/api/'
 
 const register = (fname, lname, email, password, phoneNumber, department) => {
-    return axios.post(API_URL + 'register', {
+    return axios.post('api/register', {
 
         fname,
         lname,
@@ -15,7 +14,7 @@ const register = (fname, lname, email, password, phoneNumber, department) => {
 }
 
 const login = (email, password) => {
-    return axios.post(API_URL + 'login', {
+    return axios.post('api/login', {
         email,
         password
     }).then((response) => {

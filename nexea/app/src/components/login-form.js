@@ -39,7 +39,8 @@ export default function LoginForm() {
         setMessage('')
 
         if (isValid) {
-            AuthService.login(email, password).then(
+            AuthService.login(email, password)
+            .then(
                 ()=>{
                     navigate('/home page')
                     window.location.reload()
