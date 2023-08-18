@@ -26,6 +26,6 @@ jobs:
           cache: 'npm'
       - name: install dependencies
         run: npm install
-        working-directory: ./backend
+        working-directory: ../backend
       - name: run backend test
         run: npm test
