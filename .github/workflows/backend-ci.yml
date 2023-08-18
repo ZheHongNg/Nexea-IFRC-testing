@@ -24,12 +24,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: ./backend/package-lock.json
       - name: install dependencies
         run: npm install
-        working-directory: ./backend
       - name: run backend test
         run: npm test
-        working-directory: ./backend
       - name: Debug directory contents
         run: ls -la
-        working-directory: ./backend
