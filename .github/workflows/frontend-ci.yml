@@ -24,6 +24,10 @@ jobs:
           cache: 'npm'
       - name: install dependencies
         run: npm install
-        working-directory: ../frontend
+        working-directory: ./frontend
       - name: build frontend
         run: npm run build
+        working-directory: ./frontend
+      - name: Debug directory contents
+        run: ls -la
+        working-directory: ./frontend
