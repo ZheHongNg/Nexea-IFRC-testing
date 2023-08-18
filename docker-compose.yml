@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  ifrc-frontend:
+  test-frontend:
     build: ./frontend
     container_name: test-frontend
     hostname: test-frontend
@@ -15,7 +15,7 @@ services:
     stdin_open: true
     tty: true
 
-  ifrc-backend:
+  test-backend:
     build: ./backend
     container_name: test-backend
     hostname: test-backend
