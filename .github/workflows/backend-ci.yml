@@ -25,6 +25,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: install dependencies
-        run: npm i
+        run: npm install
+        working-directory: ./backend
       - name: run backend test
         run: npm test
