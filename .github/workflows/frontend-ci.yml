@@ -1,6 +1,6 @@
 name : frontend CI
 
-on :
+on:
   push:
     branches: ["main"]
   pull_request:
@@ -9,21 +9,20 @@ on :
 jobs:
   build:
     runs-on : ubuntu-latest
-
-  strategy:
-    matrix:
-      node-version : [ 20.5.0]
+    strategy:
+      matrix:
+        node-version : [20.5.0]
   
-  steps:
-    -name: checkout action
-      uses: actions/checkout@v3
-      
-    -name: setup Node.js ${{matrix.node-version}}
-      uses: action/setup-node@3
-      with:
-        node-version : ${{matrix.node-version}}
-        cache: 'npm'
-  -name: install dependencies
-    run: npm i
-  -name : build frontend
-    run: npm run build
+    steps:
+      - name: checkout action
+        uses: actions/checkout@v3
+        
+      - name: setup Node.js ${{matrix.node-version}}
+        uses: action/setup-node@3
+        with:
+          node-version: ${{matrix.node-version}}
+          cache: 'npm'
+      - name: install dependencies
+        run: npm install
+      - name: build frontend
+        run: npm run build
