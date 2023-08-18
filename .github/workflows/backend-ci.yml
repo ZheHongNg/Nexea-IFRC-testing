@@ -29,3 +29,6 @@ jobs:
         working-directory: ../backend
       - name: run backend test
         run: npm test
+      - name: Debug directory contents
+        run: ls -la
+        working-directory: ./path/to/frontend
