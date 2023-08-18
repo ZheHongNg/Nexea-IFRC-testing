@@ -9,7 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./backend
     strategy:
         matrix:
           node-version: [20.5.0]
@@ -24,7 +26,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: './backend/package-lock.json'
       - name: install dependencies
         run: npm install
       - name: run backend test
