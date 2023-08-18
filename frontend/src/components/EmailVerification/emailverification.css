@@ -1,0 +1,38 @@
+.email-verif {
+    padding: 4rem 0;
+}
+
+.email-verif h4 {
+    text-align: center;
+}
+
+.email-verif h5 {
+    text-align: center;
+}
+
+.email-verif .ifrc-logo {
+    width: 4rem;
+}
+
+
+.text {
+    margin-top: 0;
+}
+
+.p-foot {
+    font-size: 0.85rem;
+    font-weight:300;
+}
+
+.p-body {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.p-body a {
+    color: "#0d6efd";
+    text-decoration: none;
+}
+
+
+

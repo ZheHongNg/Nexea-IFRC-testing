@@ -1,0 +1,19 @@
+.login {
+    padding: 4rem 0;
+}
+
+.login h4 {
+    text-align: center;
+}
+
+.login h5 {
+    text-align: center;
+}
+
+.login h6 {
+    color: black;
+}
+
+.login .ifrc-logo {
+    width: 4rem;
+}
