@@ -1,0 +1,30 @@
+name : backend CI
+
+on: 
+  push:
+    branches : ["main"]
+  pull_request:
+    branches : ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+  strategy:
+      matrix:
+        node-version: [ 20.5.0]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+  steps:
+    -name: checkout action
+      uses: actions/checkout@3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    -name : install dependencies
+      run: npm i
+    -name : run backend test
+      run: npm test
